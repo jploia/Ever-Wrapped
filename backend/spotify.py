@@ -7,7 +7,8 @@ load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 
-def get_token():
+def get_token() -> str:
+    """Get the generated token using the client id and secret"""
     auth_string = f'{client_id}:{client_secret}'
     auth_bytes = auth_string.encode("utf-8")
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
@@ -23,3 +24,5 @@ def get_token():
     token = json_result["access_token"]
     
     return token
+
+# def generate_random_str
