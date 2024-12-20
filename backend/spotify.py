@@ -25,17 +25,21 @@ def get_token() -> str:
     
     return token
 
-def generate_random_str(length = 128) -> str:
+def _generate_random_str(length = 128) -> str:
     """Generate a random str between 43 and 128 chars as a code verifier for PKCE standard"""
     random_bytes = os.urandom(length)
     code_verifier = base64.urlsafe_b64encode(random_bytes).rstrip(b'=')
     
     return code_verifier.decode('utf-8')
 
-def hash_code(code: str):
+def _hash_code(code: str) -> str:
     """Hash the code verifier using the SHA256 algorithm and return base64"""
     hasher = hashlib.sha256(code.encode('utf-8'))
     hash_val = hasher.hexdigest()
     hash_bytes = hash_val.encode('utf-8')
 
     return str(base64.b64encode(hash_bytes), 'utf-8')
+
+def get_code_challenge() -> str:
+    """Generate code challenge from hashing a random string"""
+    return _hash_code(_generate_random_str())
