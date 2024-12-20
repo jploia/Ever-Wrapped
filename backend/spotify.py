@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from requests import post
-import os, base64, json
+import os, base64, json, hashlib
 
 load_dotenv()
 
@@ -31,3 +31,8 @@ def generate_random_str(length = 128) -> str:
     code_verifier = base64.urlsafe_b64encode(random_bytes).rstrip(b'=')
     
     return code_verifier.decode('utf-8')
+
+def hash_code(code: str):
+    """Hash the code verifier using the SHA256 algorithm"""
+    hasher = hashlib.sha256(code.encode('utf-8'))
+    return hasher.hexdigest()
