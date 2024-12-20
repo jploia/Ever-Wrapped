@@ -25,4 +25,9 @@ def get_token() -> str:
     
     return token
 
-# def generate_random_str
+def generate_random_str(length = 128) -> str:
+    """Generate a random str between 43 and 128 chars as a code verifier for PKCE standard"""
+    random_bytes = os.urandom(length)
+    code_verifier = base64.urlsafe_b64encode(random_bytes).rstrip(b'=')
+    
+    return code_verifier.decode('utf-8')
