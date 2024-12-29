@@ -1,12 +1,17 @@
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request
 from urllib.parse import urlencode
+from dotenv import load_dotenv
 import os, base64, hashlib
+
+load_dotenv()
 
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 REDIRECT_URI = 'http://EverWrapped/callback'
 SCOPE = 'user-read-private user-read-email'
 AUTHURL = 'https://accounts.spotify.com/authorize'
+
+app = Flask (__name__)
 
 # Code Challenge generator
 def _generate_code_verifier(length = 128) -> str:
@@ -29,7 +34,8 @@ def _get_code_challenge() -> str:
     return _hash_code(_generate_code_verifier())
 
 # Request user authorization and retrieve code
-def request_user_auth() -> str:
+@app.route('/')
+def request_user_auth():
     """Request user authorization to grant app perms"""
     params = {
         'response_type': 'code',
@@ -41,18 +47,15 @@ def request_user_auth() -> str:
     }
 
     auth_url_params = f'{AUTHURL}?{urlencode(params)}'
+    return redirect(auth_url_params)
+
+# @app.route('/callback')
+# def callback():
+#     """Retrieve the callback code from the authorization url"""
+#     return request.args.get('code')
     
-    return auth_url_params
-
-# def run_oauth_server() -> None:
-#     """Opens a browser for the user to authenticate their identity"""
-
 
 
 if __name__ == '__main__':
-    try:
-        print(request_user_auth())
-        
-    finally:
-        pass
+    app.run(port=8080)
         
