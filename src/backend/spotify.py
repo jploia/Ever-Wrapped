@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect, app, request
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 import os, base64, hashlib
@@ -7,7 +7,8 @@ load_dotenv()
 
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-REDIRECT_URI = 'http://EverWrapped/callback'
+# REDIRECT_URI = 'http://EverWrapped/callback'
+REDIRECT_URI = 'http://localhost:8080/callback'
 SCOPE = 'user-read-private user-read-email'
 AUTHURL = 'https://accounts.spotify.com/authorize'
 
@@ -49,10 +50,10 @@ def request_user_auth():
     auth_url_params = f'{AUTHURL}?{urlencode(params)}'
     return redirect(auth_url_params)
 
-# @app.route('/callback')
-# def callback():
-#     """Retrieve the callback code from the authorization url"""
-#     return request.args.get('code')
+@app.route(f'/callback')
+def callback_code():
+    """Retrieve the callback code from the authorization url"""
+    return request.args.get('code')
     
 
 
