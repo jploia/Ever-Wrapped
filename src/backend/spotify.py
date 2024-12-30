@@ -10,6 +10,7 @@ REDIRECT_URI = 'http://localhost:8080/callback'
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 SCOPE = 'user-read-private user-read-email'
 AUTHURL = 'https://accounts.spotify.com/authorize'
+REQ_URL = 'https://api.spotify.com/v1/me'
 
 app = Flask (__name__)
 app.secret_key = os.getenv('CLIENT_SECRET')
@@ -52,8 +53,8 @@ def set_token() -> str:
     """Set token based on user authorization"""
     # retrieve callback code
     call_code = request.args.get('code')
-    _get_token(call_code)
-    return 'Successfully authenticated!'
+    info = _get_token(call_code)
+    return f'Successfully authenticated. Welcome {info}! :)'
     
 def _get_token(call_code: str):
     """Request token by exchanging authorization code"""
@@ -76,7 +77,19 @@ def _get_token(call_code: str):
 
     session['access_token'] = response['access_token']
 
-    print('Success!')
+    auth_header = {
+        'Authorization': f'Bearer {session['access_token']}'
+    }
+
+    auth_response = requests.get(REQ_URL, headers=auth_header)
+
+    try:
+        data = auth_response.json()
+        print(data)
+        return data['display_name']
+    finally:
+        pass
+
 
 if __name__ == '__main__':
     app.run(port=8080)
