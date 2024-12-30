@@ -73,13 +73,9 @@ def _get_token(call_code: str):
     body = requests.post(TOKEN_URL, data=payload, headers=header)
     # nested dictionary
     response = json.loads(body.text)
-    print(f'code verifier: {CODE_VERIFIER}')
-    print(f'code challenge: {CODE_CHALLENGE}')
-    print(response)
 
-    # session['access_token'] = response['access_token']
+    session['access_token'] = response['access_token']
 
-    # we want to render something here in html.
     print('Success!')
 
 if __name__ == '__main__':
