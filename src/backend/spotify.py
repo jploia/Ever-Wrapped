@@ -55,8 +55,8 @@ def set_token() -> str:
     call_code = request.args.get('code')
     _get_token(call_code)
     data = _get_user_info()
-    top_artists = _get_top_artists()
-    top_songs = _get_top_songs()
+    top_artists = get_top_artists()
+    top_songs = get_top_songs()
     return f'hello {top_songs}'
     
 def _get_token(call_code: str) -> None:
@@ -95,7 +95,7 @@ def _get_user_info() -> dict:
     finally:
         pass
 
-def _get_top_artists() -> dict:
+def get_top_artists() -> dict:
     """Retrieve information about the user's top artists from the API"""
     header = {
         'Authorization': f'Bearer {session['access_token']}'
@@ -109,7 +109,7 @@ def _get_top_artists() -> dict:
     finally:
         pass
 
-def _get_top_songs() -> dict:
+def get_top_songs() -> dict:
     """Retrieve information about the user's top songs from the API"""
     header = {
         'Authorization': f'Bearer {session['access_token']}'
