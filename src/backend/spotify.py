@@ -55,7 +55,9 @@ def set_token() -> str:
     call_code = request.args.get('code')
     _get_token(call_code)
     data = _get_user_info()
-    return f'hello {data}'
+    top_artists = _get_top_artists()
+    top_songs = _get_top_songs()
+    return f'hello {top_songs}'
     
 def _get_token(call_code: str) -> None:
     """Request token by exchanging authorization code"""
@@ -93,7 +95,33 @@ def _get_user_info() -> dict:
     finally:
         pass
 
-    # response = requests.get(f'{USER_INFO_URL}/top/artists', headers=header)
+def _get_top_artists() -> dict:
+    """Retrieve information about the user's top artists from the API"""
+    header = {
+        'Authorization': f'Bearer {session['access_token']}'
+    }
+
+    response = requests.get(f'{USER_INFO_URL}/top/artists?time_range=long_term&limit=5', headers=header)
+
+    try:
+        data = response.json()
+        return data
+    finally:
+        pass
+
+def _get_top_songs() -> dict:
+    """Retrieve information about the user's top songs from the API"""
+    header = {
+        'Authorization': f'Bearer {session['access_token']}'
+    }
+
+    response = requests.get(f'{USER_INFO_URL}/top/tracks?time_range=long_term', headers=header)
+
+    try:
+        data = response.json()
+        return data
+    finally:
+        pass
     
 if __name__ == '__main__':
     app.run(port=8080)
