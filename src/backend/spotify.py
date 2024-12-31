@@ -54,7 +54,7 @@ def set_token() -> str:
     # retrieve callback code
     call_code = request.args.get('code')
     _get_token(call_code)
-    data = _get_user_info()
+    data = get_user_info()
     top_artists = get_top_artists()
     top_songs = get_top_songs()
     return f'hello {top_songs}'
@@ -81,7 +81,7 @@ def _get_token(call_code: str) -> None:
     session['access_token'] = response['access_token']
 
 
-def _get_user_info() -> dict:
+def get_user_info() -> dict:
     """Retrieve information about the user's profile from the API"""
     header = {
         'Authorization': f'Bearer {session['access_token']}'
