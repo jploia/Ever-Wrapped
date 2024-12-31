@@ -8,9 +8,9 @@ load_dotenv()
 CLIENT_ID = os.getenv('CLIENT_ID')
 REDIRECT_URI = 'http://localhost:8080/callback'
 TOKEN_URL = "https://accounts.spotify.com/api/token"
-SCOPE = 'user-read-private user-read-email'
+SCOPE = 'user-read-private user-read-email user-top-read'
 AUTHURL = 'https://accounts.spotify.com/authorize'
-REQ_URL = 'https://api.spotify.com/v1/me'
+USER_INFO_URL = 'https://api.spotify.com/v1/me'
 
 app = Flask (__name__)
 app.secret_key = os.getenv('CLIENT_SECRET')
@@ -53,10 +53,11 @@ def set_token() -> str:
     """Set token based on user authorization"""
     # retrieve callback code
     call_code = request.args.get('code')
-    info = _get_token(call_code)
-    return f'Successfully authenticated. Welcome {info}! :)'
+    _get_token(call_code)
+    data = _get_user_info()
+    return f'hello {data}'
     
-def _get_token(call_code: str):
+def _get_token(call_code: str) -> None:
     """Request token by exchanging authorization code"""
     payload = {
         'client_id': CLIENT_ID,
@@ -77,20 +78,23 @@ def _get_token(call_code: str):
 
     session['access_token'] = response['access_token']
 
-    auth_header = {
+
+def _get_user_info() -> dict:
+    """Retrieve information about the user's profile from the API"""
+    header = {
         'Authorization': f'Bearer {session['access_token']}'
     }
 
-    auth_response = requests.get(REQ_URL, headers=auth_header)
+    response = requests.get(USER_INFO_URL, headers=header)
 
     try:
-        data = auth_response.json()
-        print(data)
-        return data['display_name']
+        data = response.json()
+        return data
     finally:
         pass
 
-
+    # response = requests.get(f'{USER_INFO_URL}/top/artists', headers=header)
+    
 if __name__ == '__main__':
     app.run(port=8080)
         
